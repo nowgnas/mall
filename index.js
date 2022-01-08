@@ -1,51 +1,24 @@
 const express = require("express");
+const db_config = require("./server/config/connectDB");
+const conn = db_config.init();
 const bodyParser = require("body-parser");
-const db = require("./server/config/database");
-const conn = db.init();
 
-const app = express();
+db_config.connect(conn);
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
-// db connection
-db.connect(conn);
+app.get("/", function (req, res) {
+  res.send("ROOT");
+});
 
-// main page
-app.get("/", (req, res) => res.send("Im Root"));
+app.get("/select", (req, res) => {
+  const sql = "SELECT * FROM users";
 
-// test url
-// app.get("/test", (req, res) => console.log(User.name.type));
-
-// create db
-
-// database select
-app.get("/list", (req, res) => {
-  const sql = "SELECT * FROM user";
   conn.query(sql, (err, rows, fields) => {
-    for (let index = 0; index < rows.length; index++) {
-      console.log(rows[index].id, rows[i].name);
-    }
+    if (err) console.log("query is not excuted" + err);
+    else res.send(rows);
   });
 });
 
-// insert data
-app.get("/writeDB", (req, res) => {
-  const userInfo = req.body;
-  console.log(body);
-
-  const sql = "INSERT INTO user VALUES(?, ?)";
-  const params = [userInfo.id, userInfo.name];
-  console.log(sql);
-  conn.query(sql, params, (err) => {
-    if (err) {
-      console.log("write error");
-    } else {
-      res.redirect("/list");
-    }
-  });
-});
-
-// 앱 실행
-const port = 8080;
-app.listen(port, () => console.log(`${port} port is running`));
+// todo: create table users and test insert with get method
