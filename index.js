@@ -1,5 +1,5 @@
 const express = require("express");
-const db_config = require("./server/config/connectDB");
+const db_config = require("./models/connectDB");
 const conn = db_config.init();
 const bodyParser = require("body-parser");
 
